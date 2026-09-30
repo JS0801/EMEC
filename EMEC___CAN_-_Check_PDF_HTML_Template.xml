@@ -3,32 +3,32 @@
 <pdf>
 <head>
 	<link name="NotoSans" type="font" subtype="truetype" src="${nsfont.NotoSans_Regular}" src-bold="${nsfont.NotoSans_Bold}" src-italic="${nsfont.NotoSans_Italic}" src-bolditalic="${nsfont.NotoSans_BoldItalic}" bytes="2" />
-	<#if .locale == "zh_CN">
+<#if .locale == "zh_CN">
 		<link name="NotoSansCJKsc" type="font" subtype="opentype" src="${nsfont.NotoSansCJKsc_Regular}" src-bold="${nsfont.NotoSansCJKsc_Bold}" bytes="2" />
-	<#elseif .locale == "zh_TW">
+<#elseif .locale == "zh_TW">
 		<link name="NotoSansCJKtc" type="font" subtype="opentype" src="${nsfont.NotoSansCJKtc_Regular}" src-bold="${nsfont.NotoSansCJKtc_Bold}" bytes="2" />
-	<#elseif .locale == "ja_JP">
+<#elseif .locale == "ja_JP">
 		<link name="NotoSansCJKjp" type="font" subtype="opentype" src="${nsfont.NotoSansCJKjp_Regular}" src-bold="${nsfont.NotoSansCJKjp_Bold}" bytes="2" />
-	<#elseif .locale == "ko_KR">
+<#elseif .locale == "ko_KR">
 		<link name="NotoSansCJKkr" type="font" subtype="opentype" src="${nsfont.NotoSansCJKkr_Regular}" src-bold="${nsfont.NotoSansCJKkr_Bold}" bytes="2" />
-	<#elseif .locale == "th_TH">
+<#elseif .locale == "th_TH">
 		<link name="NotoSansThai" type="font" subtype="opentype" src="${nsfont.NotoSansThai_Regular}" src-bold="${nsfont.NotoSansThai_Bold}" bytes="2" />
-	</#if>
+</#if>
 	<style>
 		* {
-		<#if .locale == "zh_CN">
+<#if .locale == "zh_CN">
 			font-family: NotoSans, NotoSansCJKsc, sans-serif;
-		<#elseif .locale == "zh_TW">
+<#elseif .locale == "zh_TW">
 			font-family: NotoSans, NotoSansCJKtc, sans-serif;
-		<#elseif .locale == "ja_JP">
+<#elseif .locale == "ja_JP">
 			font-family: NotoSans, NotoSansCJKjp, sans-serif;
-		<#elseif .locale == "ko_KR">
+<#elseif .locale == "ko_KR">
 			font-family: NotoSans, NotoSansCJKkr, sans-serif;
-		<#elseif .locale == "th_TH">
+<#elseif .locale == "th_TH">
 			font-family: NotoSans, NotoSansThai, sans-serif;
-		<#else>
+<#else>
 			font-family: NotoSans, sans-serif;
-		</#if>
+</#if>
 		}
         .check table {
             position: relative;
@@ -36,19 +36,227 @@
             font-size: 8pt;
         }
 		td p { align:left }
+        .remittance { font-size: 8pt; table-layout: fixed; }
+        .remittance th { padding: 3pt; background-color: #eeeeee; border-bottom: 0.5pt solid #777777; }
+        .remittance td { padding: 3pt; border-bottom: 0.25pt solid #dddddd; }
     </style>
 </head>
-<body padding="0.5in 0.5in 0.5in 0.5in" size="Letter">
-    <#list records as check>
-    <div style="position: relative;font-family: Helvetica,sans-serif;top= -11pt;height: 250pt;width: 612pt;page-break-inside: avoid;font-size: 8pt;">
-        <table style="position: absolute;overflow: hidden;left: 489pt;top: 8pt;height: 7pt;width: 85pt;font-size: 5pt;"><tr><td align="center">${check.checknumber}</td></tr></table>
-        <table style="position: absolute;overflow: hidden;left: 466pt;top: 34pt;height: 18pt;width: 108pt;"><tr><td>${check.trandate}</td></tr></table>
-        <table style="position: absolute;overflow: hidden;left: 50pt;top: 69pt;height: 18pt;width: 393pt;"><tr><td>${check.entity}</td></tr></table>
-        <table style="position: absolute;overflow: hidden;left: 463pt;top: 69pt;height: 18pt;width: 111pt;"><tr><td>**<#if (check.usertotal?length > 0)>${check.usertotal}<#else>${check.total}</#if></td></tr></table>
-        <table style="position: absolute;overflow: hidden;left: 2pt;top: 93pt;height: 18pt;width: 572pt;"><tr><td>${check.totalwords}*********************************************************************</td></tr></table>
-        <table style="position: absolute;overflow: hidden;left: 37pt;top: 122pt;height: 80pt;width: 537pt;"><tr><td>${check.address}</td></tr></table>
-        <table style="position: absolute;overflow: hidden;left: 2pt;top: 178pt;height: 18pt;width: 572pt;"><tr><td>${check.memo}</td></tr></table>
+<#-- Use full-page Letter PNG/JPG backgrounds. Replace the URL inside each
+     currency branch. Use literal & in the FreeMarker URL string; ?xml escapes it.
+     Remove sample check numbers from the artwork. MICR is not generated here.
+     Each currency branch below is complete, with literal positions and two
+     separately written remittance tables; no shared layout macros or coordinates.
+     check.apply supplies applied bill rows. Checks without applied bills show memo.
+-->
+<body padding="0pt 0pt 0pt 0pt" size="Letter">
+<#list records as check>
+    
+<#if check_index != 0>
+<pbr />
+</#if>
+    
+<#if (check.currency!"")?string?trim?upper_case == "USD">
+    <#-- ==================== COMPLETE USD LAYOUT ==================== -->
+    <#assign USD_BACKGROUND_URL = "REPLACE_WITH_USD_BACKGROUND_IMAGE_URL">
+    <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
+<#if check.apply?has_content>
+        
+<#if check.apply?size gt 8>
+            <#stop "This USD check has more than 8 applied bills. Print a separate remittance or extend the voucher layout before printing.">
+</#if>
+    
+</#if>
+    <div style="position: relative; width: 612pt; height: 790pt; font-size: 9pt;">
+<#if USD_BACKGROUND_URL?has_content && !USD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
+        <img src="${USD_BACKGROUND_URL?xml}" style="position: absolute; left: 0pt; top: 0pt; width: 612pt; height: 792pt;" />
+</#if>
+        <table style="position: absolute; left: 536pt; top: 10pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 296pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 548pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 470pt; top: 324pt; width: 120pt; height: 14pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">
+<#if check.trandate?is_date_like>
+${check.trandate?string("dd MM yyyy")}
+<#else>
+${check.trandate}
+</#if>
+</td></tr></table>
+        <table style="position: absolute; left: 34pt; top: 362pt; width: 404pt; height: 26pt; font-size: 9pt;"><tr><td align="left" style="padding: 0pt;">${check.totalwords} ***</td></tr></table>
+        <table style="position: absolute; left: 491pt; top: 362pt; width: 94pt; height: 20pt; font-size: 11pt;"><tr><td align="right" style="padding: 0pt;">**
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</td></tr></table>
+        <table style="position: absolute; left: 13pt; top: 411pt; width: 296pt; height: 17pt; font-size: 9pt;"><tr><td align="left" style="padding: 0pt;">${check.entity}</td></tr></table>
+        <table style="position: absolute; left: 13pt; top: 427pt; width: 296pt; height: 36pt; font-size: 8pt;"><tr><td align="left" style="padding: 0pt;">${check.address}</td></tr></table>
+        <table style="position: absolute; left: 13pt; top: 464pt; width: 296pt; height: 12pt; font-size: 7pt;"><tr><td align="left" style="padding: 0pt;">${check.memo}</td></tr></table>
+        <#-- Voucher 1: independent remittance markup. -->
+        <table style="position: absolute; left: 18pt; top: 38pt; width: 576pt; font-size: 8pt;">
+            <tr><td width="365pt"><b>REMITTANCE - USD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+        </table>
+        <table class="remittance" style="position: absolute; left: 18pt; top: 70pt; width: 576pt;">
+            <thead><tr><th width="100pt">Date</th><th width="340pt">Invoice / Reference</th><th width="136pt" align="right">Amount Paid (USD)</th></tr></thead>
+            <tbody>
+<#if check.apply?has_content>
+                
+<#list check.apply as bill>
+                <tr><td>${bill.applydate}</td><td>${bill.refnum}</td><td align="right">${bill.amount}</td></tr>
+</#list>
+            
+<#else>
+                <tr><td>${check.trandate}</td><td>${check.memo}</td><td align="right">
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</td></tr>
+</#if>
+                <tr><td colspan="2" align="right"><b>Check Total</b></td><td align="right"><b>
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</b></td></tr>
+            </tbody>
+        </table>
+        <#-- Voucher 2: independent remittance markup. -->
+        <table style="position: absolute; left: 18pt; top: 574pt; width: 576pt; font-size: 8pt;">
+            <tr><td width="365pt"><b>REMITTANCE - USD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+        </table>
+        <table class="remittance" style="position: absolute; left: 18pt; top: 606pt; width: 576pt;">
+            <thead><tr><th width="100pt">Date</th><th width="340pt">Invoice / Reference</th><th width="136pt" align="right">Amount Paid (USD)</th></tr></thead>
+            <tbody>
+<#if check.apply?has_content>
+                
+<#list check.apply as bill>
+                <tr><td>${bill.applydate}</td><td>${bill.refnum}</td><td align="right">${bill.amount}</td></tr>
+</#list>
+            
+<#else>
+                <tr><td>${check.trandate}</td><td>${check.memo}</td><td align="right">
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</td></tr>
+</#if>
+                <tr><td colspan="2" align="right"><b>Check Total</b></td><td align="right"><b>
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</b></td></tr>
+            </tbody>
+        </table>
     </div>
-    </#list>
+<#else>
+    
+
+    <#-- ==================== COMPLETE CAD LAYOUT ==================== -->
+    <#assign CAD_BACKGROUND_URL = "REPLACE_WITH_CAD_BACKGROUND_IMAGE_URL">
+    <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
+<#if check.apply?has_content>
+        
+<#if check.apply?size gt 8>
+            <#stop "This CAD check has more than 8 applied bills. Print a separate remittance or extend the voucher layout before printing.">
+</#if>
+    
+</#if>
+    <div style="position: relative; width: 612pt; height: 790pt; font-size: 9pt;">
+<#if CAD_BACKGROUND_URL?has_content && !CAD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
+        <img src="${CAD_BACKGROUND_URL?xml}" style="position: absolute; left: 0pt; top: 0pt; width: 612pt; height: 792pt;" />
+</#if>
+        <table style="position: absolute; left: 536pt; top: 10pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 293pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 552pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 470pt; top: 586pt; width: 120pt; height: 14pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">
+<#if check.trandate?is_date_like>
+${check.trandate?string("dd MM yyyy")}
+<#else>
+${check.trandate}
+</#if>
+</td></tr></table>
+        <table style="position: absolute; left: 34pt; top: 637pt; width: 404pt; height: 26pt; font-size: 9pt;"><tr><td align="left" style="padding: 0pt;">${check.totalwords} ***</td></tr></table>
+        <table style="position: absolute; left: 491pt; top: 637pt; width: 94pt; height: 20pt; font-size: 11pt;"><tr><td align="right" style="padding: 0pt;">**
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</td></tr></table>
+        <table style="position: absolute; left: 13pt; top: 680pt; width: 296pt; height: 17pt; font-size: 9pt;"><tr><td align="left" style="padding: 0pt;">${check.entity}</td></tr></table>
+        <table style="position: absolute; left: 13pt; top: 696pt; width: 296pt; height: 36pt; font-size: 8pt;"><tr><td align="left" style="padding: 0pt;">${check.address}</td></tr></table>
+        <table style="position: absolute; left: 13pt; top: 730pt; width: 296pt; height: 12pt; font-size: 7pt;"><tr><td align="left" style="padding: 0pt;">${check.memo}</td></tr></table>
+        <#-- Voucher 1: independent remittance markup. -->
+        <table style="position: absolute; left: 18pt; top: 38pt; width: 576pt; font-size: 8pt;">
+            <tr><td width="365pt"><b>REMITTANCE - CAD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+        </table>
+        <table class="remittance" style="position: absolute; left: 18pt; top: 70pt; width: 576pt;">
+            <thead><tr><th width="100pt">Date</th><th width="340pt">Invoice / Reference</th><th width="136pt" align="right">Amount Paid (CAD)</th></tr></thead>
+            <tbody>
+<#if check.apply?has_content>
+                
+<#list check.apply as bill>
+                <tr><td>${bill.applydate}</td><td>${bill.refnum}</td><td align="right">${bill.amount}</td></tr>
+</#list>
+            
+<#else>
+                <tr><td>${check.trandate}</td><td>${check.memo}</td><td align="right">
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</td></tr>
+</#if>
+                <tr><td colspan="2" align="right"><b>Check Total</b></td><td align="right"><b>
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</b></td></tr>
+            </tbody>
+        </table>
+        <#-- Voucher 2: independent remittance markup. -->
+        <table style="position: absolute; left: 18pt; top: 324pt; width: 576pt; font-size: 8pt;">
+            <tr><td width="365pt"><b>REMITTANCE - CAD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+        </table>
+        <table class="remittance" style="position: absolute; left: 18pt; top: 356pt; width: 576pt;">
+            <thead><tr><th width="100pt">Date</th><th width="340pt">Invoice / Reference</th><th width="136pt" align="right">Amount Paid (CAD)</th></tr></thead>
+            <tbody>
+<#if check.apply?has_content>
+                
+<#list check.apply as bill>
+                <tr><td>${bill.applydate}</td><td>${bill.refnum}</td><td align="right">${bill.amount}</td></tr>
+</#list>
+            
+<#else>
+                <tr><td>${check.trandate}</td><td>${check.memo}</td><td align="right">
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</td></tr>
+</#if>
+                <tr><td colspan="2" align="right"><b>Check Total</b></td><td align="right"><b>
+<#if (check.usertotal!"")?has_content>
+${check.usertotal}
+<#else>
+${check.total}
+</#if>
+</b></td></tr>
+            </tbody>
+        </table>
+    </div>
+</#if>
+
+</#list>
 </body>
 </pdf>
