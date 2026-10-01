@@ -80,7 +80,7 @@ ${check.total}
 </#if>
 </td></tr></table>
         <table style="position: absolute; left: 94pt; top: 399pt; width: 296pt; height: 17pt; font-size: 9pt;"><tr><td align="left" style="padding: 0pt;">${check.entity}</td></tr></table>
-        <table style="position: absolute; left: 13pt; top: 427pt; width: 296pt; height: 36pt; font-size: 8pt;"><tr><td align="left" style="padding: 0pt;">${check.address}</td></tr></table>
+        <table style="position: absolute; left: 13pt; top: 410pt; width: 296pt; height: 36pt; font-size: 8pt;"><tr><td align="left" style="padding: 0pt;">${check.address}</td></tr></table>
         <table style="position: absolute; left: 13pt; top: 464pt; width: 296pt; height: 12pt; font-size: 7pt;"><tr><td align="left" style="padding: 0pt;">${check.memo}</td></tr></table>
         <#-- Voucher 1: independent remittance markup. -->
         <table style="position: absolute; left: 18pt; top: 38pt; width: 576pt; font-size: 8pt;">
