@@ -203,7 +203,7 @@ ${check.total}
 <#if CAD_BACKGROUND_URL?has_content && !CAD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
         <img src="${CAD_BACKGROUND_URL?xml}" style="position: absolute; left: 0pt; top: 0pt; width: 612pt; height: 792pt;" />
 </#if>
-        <table style="position: absolute; left: 536pt; top: 15pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 17pt; width: 68pt; height: 22pt; font-size: 9pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
         <table style="position: absolute; left: 536pt; top: 293pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
         <table style="position: absolute; left: 536pt; top: 552pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
         <table style="position: absolute; left: 470pt; top: 586pt; width: 120pt; height: 14pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">
