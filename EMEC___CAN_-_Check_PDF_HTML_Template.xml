@@ -63,7 +63,7 @@
      </#if>
         <table style="position: absolute; left: 536pt; top: 16pt; width: 68pt; height: 22pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
         <table style="position: absolute; left: 536pt; top: 301pt; width: 68pt; height: 22pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
-        <table style="position: absolute; left: 536pt; top: 548pt; width: 68pt; height: 22pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 554pt; width: 68pt; height: 22pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
         <table style="position: absolute; left: 470pt; top: 324pt; width: 120pt; height: 14pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">
 <#if check.trandate?is_date_like>
 ${check.trandate?string("dd MM yyyy")}
