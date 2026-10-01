@@ -88,7 +88,7 @@ ${check.total}
         </table>
         <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 70pt; width: 576pt; font-size: 8pt; table-layout: fixed;">
             <#-- Reference layout only: direct bill fields, no bill/credit calculations. -->
-            <thead><tr>
+            <thead><tr padding-bottom = "5px">
                 <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Date</th>
                 <th align="left" style="width: 10%; padding: 2pt; background-color: #ffffff; border: 0pt;">Type</th>
                 <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Reference</th>
@@ -120,7 +120,7 @@ ${check.total}
 </#if></td>
             </tr>
 </#if>
-            <tr>
+            <tr padding-top = "5px">
                 <td colspan="5" style="padding: 2pt;"><b>CHECK TOTAL:</b></td>
                 <td style="padding: 2pt;">&#160;</td>
                 <td align="right" style="padding: 2pt;"><b><#if (check.usertotal!"")?has_content>
@@ -136,7 +136,7 @@ ${check.total}
         </table>
         <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 606pt; width: 576pt; font-size: 8pt; table-layout: fixed;">
             <#-- Reference layout only: direct bill fields, no bill/credit calculations. -->
-            <thead><tr>
+            <thead><tr padding-bottom = "5px">
                 <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Date</th>
                 <th align="left" style="width: 10%; padding: 2pt; background-color: #ffffff; border: 0pt;">Type</th>
                 <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Reference</th>
@@ -168,7 +168,7 @@ ${check.total}
 </#if></td>
             </tr>
 </#if>
-            <tr>
+            <tr padding-top = "5px">
                 <td colspan="5" style="padding: 2pt;"><b>CHECK TOTAL:</b></td>
                 <td style="padding: 2pt;">&#160;</td>
                 <td align="right" style="padding: 2pt;"><b><#if (check.usertotal!"")?has_content>
