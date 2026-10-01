@@ -53,7 +53,7 @@
 <pbr />
 </#if>
     
-<#if (check.currency!"")?string?trim?upper_case == "USD">
+<#if (check.currency!"")?string?trim?upper_case == "CAD">
     <#-- ==================== COMPLETE USD LAYOUT ==================== -->
     <#assign USD_BACKGROUND_URL = "https://3989465.app.netsuite.com/core/media/media.nl?id=4804&c=3989465&h=qo5wlEe54IT-FCvqBr9VMb1rYKlYk67RHVJf-MJUOhpH_EdJ">
     <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
@@ -239,8 +239,8 @@ ${check.total}
                 <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Disc</th>
                 <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Payment</th>
             </tr></thead>
-<#if check.apply?has_content>
-    <#list check.apply as bill>
+            <#if check.apply?has_content>
+            <#list check.apply as bill>
             <tr>
                 <td align="center" style="width: 15%; padding: 2pt;">${bill.applydate!""}</td>
                 <td align="left" style="width: 10%; padding: 2pt;">${bill.type!""}</td>
@@ -250,8 +250,8 @@ ${check.total}
                 <td align="right" style="width: 15%; padding: 2pt;">${bill.disc!""}</td>
                 <td align="right" style="width: 15%; padding: 2pt;">${bill.amount!""}</td>
             </tr>
-    </#list>
-<#else>
+            </#list>
+           <#else>
             <tr>
                 <td align="center" style="padding: 2pt;">${check.trandate}</td>
                 <td colspan="5" style="padding: 2pt;">${check.memo!""}</td>
