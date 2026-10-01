@@ -37,7 +37,6 @@
         }
 		td p { align:left }
         .remittance { font-size: 8pt; table-layout: fixed; }
-        .remittance th { padding: 3pt; background-color: #eeeeee; border-bottom: 0.5pt solid #777777; }
     </style>
 </head>
 <#-- Use full-page Letter PNG/JPG backgrounds. Replace the URL inside each
@@ -57,7 +56,14 @@
 <#if (check.currency!"")?string?trim?upper_case == "USD">
     <#-- ==================== COMPLETE USD LAYOUT ==================== -->
     <#assign USD_BACKGROUND_URL = "REPLACE_WITH_USD_BACKGROUND_IMAGE_URL">
-      
+    <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
+<#if check.apply?has_content>
+        
+<#if check.apply?size gt 8>
+            <#stop "This USD check has more than 8 applied bills. Print a separate remittance or extend the voucher layout before printing.">
+</#if>
+    
+</#if>
     <div style="position: relative; width: 612pt; height: 790pt; font-size: 9pt;">
 <#if USD_BACKGROUND_URL?has_content && !USD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
         <img src="${USD_BACKGROUND_URL?xml}" style="position: absolute; left: 0pt; top: 0pt; width: 612pt; height: 792pt;" />
@@ -85,81 +91,99 @@ ${check.total}
         <table style="position: absolute; left: 13pt; top: 464pt; width: 296pt; height: 12pt; font-size: 7pt;"><tr><td align="left" style="padding: 0pt;">${check.memo}</td></tr></table>
         <#-- Voucher 1: independent remittance markup. -->
         <table style="position: absolute; left: 18pt; top: 38pt; width: 576pt; font-size: 8pt;">
-            <tr><td width="365pt"><b>REMITTANCE - USD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+            <tr><td width="365pt">${check.entity}</td><td align="right">${check.trandate}</td></tr>
         </table>
-        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 70pt; width: 576pt; border-collapse: collapse; border: 0.75pt solid #333333; background-color: #ffffff; font-size: 8pt; table-layout: fixed;">
-            <tr>
-                <td width="100pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice Date</b></td>
-                <td width="340pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice / Reference</b></td>
-                <td width="136pt" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Amount Paid (USD)</b></td>
-            </tr>
+        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 70pt; width: 576pt; font-size: 8pt; table-layout: fixed;">
+            <#-- Reference layout only: direct bill fields, no bill/credit calculations. -->
+            <thead><tr>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Date</th>
+                <th align="left" style="width: 10%; padding: 2pt; background-color: #ffffff; border: 0pt;">Type</th>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Reference</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Original Amount</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Amount Due</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Disc</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Payment</th>
+            </tr></thead>
 <#if check.apply?has_content>
     <#list check.apply as bill>
             <tr>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.applydate!""}</td>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.refnum!""}</td>
-                <td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.amount!""}</td>
+                <td align="center" style="width: 15%; padding: 2pt;">${bill.applydate!""}</td>
+                <td align="left" style="width: 10%; padding: 2pt;">${bill.type!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.refnum!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.total!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.due!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.disc!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.amount!""}</td>
             </tr>
     </#list>
-    <#if check.apply?size lt 8>
-        <#list 1..(8 - check.apply?size) as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-        </#list>
-    </#if>
 <#else>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.trandate}</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.memo!""}</td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;"><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td align="center" style="padding: 2pt;">${check.trandate}</td>
+                <td colspan="5" style="padding: 2pt;">${check.memo!""}</td>
+                <td align="right" style="padding: 2pt;"><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></td></tr>
-    <#list 1..7 as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-    </#list>
+</#if></td>
+            </tr>
 </#if>
-            <tr><td colspan="2" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b>Check Total (USD)</b></td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td colspan="5" style="padding: 2pt;"><b>CHECK TOTAL:</b></td>
+                <td style="padding: 2pt;">&#160;</td>
+                <td align="right" style="padding: 2pt;"><b><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></b></td></tr>
+</#if></b></td>
+            </tr>
         </table>
         <#-- Voucher 2: independent remittance markup. -->
         <table style="position: absolute; left: 18pt; top: 574pt; width: 576pt; font-size: 8pt;">
-            <tr><td width="365pt"><b>REMITTANCE - USD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+            <tr><td width="365pt">${check.entity}</td><td align="right">${check.trandate}</td></tr>
         </table>
-        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 606pt; width: 576pt; border-collapse: collapse; border: 0.75pt solid #333333; background-color: #ffffff; font-size: 8pt; table-layout: fixed;">
-            <tr>
-                <td width="100pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice Date</b></td>
-                <td width="340pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice / Reference</b></td>
-                <td width="136pt" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Amount Paid (USD)</b></td>
-            </tr>
+        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 606pt; width: 576pt; font-size: 8pt; table-layout: fixed;">
+            <#-- Reference layout only: direct bill fields, no bill/credit calculations. -->
+            <thead><tr>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Date</th>
+                <th align="left" style="width: 10%; padding: 2pt; background-color: #ffffff; border: 0pt;">Type</th>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Reference</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Original Amount</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Amount Due</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Disc</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Payment</th>
+            </tr></thead>
 <#if check.apply?has_content>
     <#list check.apply as bill>
             <tr>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.applydate!""}</td>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.refnum!""}</td>
-                <td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.amount!""}</td>
+                <td align="center" style="width: 15%; padding: 2pt;">${bill.applydate!""}</td>
+                <td align="left" style="width: 10%; padding: 2pt;">${bill.type!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.refnum!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.total!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.due!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.disc!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.amount!""}</td>
             </tr>
     </#list>
-    <#if check.apply?size lt 8>
-        <#list 1..(8 - check.apply?size) as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-        </#list>
-    </#if>
 <#else>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.trandate}</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.memo!""}</td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;"><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td align="center" style="padding: 2pt;">${check.trandate}</td>
+                <td colspan="5" style="padding: 2pt;">${check.memo!""}</td>
+                <td align="right" style="padding: 2pt;"><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></td></tr>
-    <#list 1..7 as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-    </#list>
+</#if></td>
+            </tr>
 </#if>
-            <tr><td colspan="2" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b>Check Total (USD)</b></td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td colspan="5" style="padding: 2pt;"><b>CHECK TOTAL:</b></td>
+                <td style="padding: 2pt;">&#160;</td>
+                <td align="right" style="padding: 2pt;"><b><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></b></td></tr>
+</#if></b></td>
+            </tr>
         </table>
     </div>
 <#else>
@@ -167,6 +191,14 @@ ${check.total}
 
     <#-- ==================== COMPLETE CAD LAYOUT ==================== -->
     <#assign CAD_BACKGROUND_URL = "REPLACE_WITH_CAD_BACKGROUND_IMAGE_URL">
+    <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
+<#if check.apply?has_content>
+        
+<#if check.apply?size gt 8>
+            <#stop "This CAD check has more than 8 applied bills. Print a separate remittance or extend the voucher layout before printing.">
+</#if>
+    
+</#if>
     <div style="position: relative; width: 612pt; height: 790pt; font-size: 9pt;">
 <#if CAD_BACKGROUND_URL?has_content && !CAD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
         <img src="${CAD_BACKGROUND_URL?xml}" style="position: absolute; left: 0pt; top: 0pt; width: 612pt; height: 792pt;" />
@@ -194,81 +226,99 @@ ${check.total}
         <table style="position: absolute; left: 13pt; top: 730pt; width: 296pt; height: 12pt; font-size: 7pt;"><tr><td align="left" style="padding: 0pt;">${check.memo}</td></tr></table>
         <#-- Voucher 1: independent remittance markup. -->
         <table style="position: absolute; left: 18pt; top: 38pt; width: 576pt; font-size: 8pt;">
-            <tr><td width="365pt"><b>REMITTANCE - CAD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+            <tr><td width="365pt">${check.entity}</td><td align="right">${check.trandate}</td></tr>
         </table>
-        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 70pt; width: 576pt; border-collapse: collapse; border: 0.75pt solid #333333; background-color: #ffffff; font-size: 8pt; table-layout: fixed;">
-            <tr>
-                <td width="100pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice Date</b></td>
-                <td width="340pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice / Reference</b></td>
-                <td width="136pt" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Amount Paid (CAD)</b></td>
-            </tr>
+        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 70pt; width: 576pt; font-size: 8pt; table-layout: fixed;">
+            <#-- Reference layout only: direct bill fields, no bill/credit calculations. -->
+            <thead><tr>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Date</th>
+                <th align="left" style="width: 10%; padding: 2pt; background-color: #ffffff; border: 0pt;">Type</th>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Reference</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Original Amount</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Amount Due</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Disc</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Payment</th>
+            </tr></thead>
 <#if check.apply?has_content>
     <#list check.apply as bill>
             <tr>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.applydate!""}</td>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.refnum!""}</td>
-                <td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.amount!""}</td>
+                <td align="center" style="width: 15%; padding: 2pt;">${bill.applydate!""}</td>
+                <td align="left" style="width: 10%; padding: 2pt;">${bill.type!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.refnum!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.total!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.due!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.disc!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.amount!""}</td>
             </tr>
     </#list>
-    <#if check.apply?size lt 8>
-        <#list 1..(8 - check.apply?size) as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-        </#list>
-    </#if>
 <#else>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.trandate}</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.memo!""}</td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;"><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td align="center" style="padding: 2pt;">${check.trandate}</td>
+                <td colspan="5" style="padding: 2pt;">${check.memo!""}</td>
+                <td align="right" style="padding: 2pt;"><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></td></tr>
-    <#list 1..7 as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-    </#list>
+</#if></td>
+            </tr>
 </#if>
-            <tr><td colspan="2" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b>Check Total (CAD)</b></td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td colspan="5" style="padding: 2pt;"><b>CHECK TOTAL:</b></td>
+                <td style="padding: 2pt;">&#160;</td>
+                <td align="right" style="padding: 2pt;"><b><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></b></td></tr>
+</#if></b></td>
+            </tr>
         </table>
         <#-- Voucher 2: independent remittance markup. -->
         <table style="position: absolute; left: 18pt; top: 324pt; width: 576pt; font-size: 8pt;">
-            <tr><td width="365pt"><b>REMITTANCE - CAD</b><br />Payee: ${check.entity}</td><td align="right">Date: ${check.trandate}<br />Check: ${check.checknumber}</td></tr>
+            <tr><td width="365pt">${check.entity}</td><td align="right">${check.trandate}</td></tr>
         </table>
-        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 356pt; width: 576pt; border-collapse: collapse; border: 0.75pt solid #333333; background-color: #ffffff; font-size: 8pt; table-layout: fixed;">
-            <tr>
-                <td width="100pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice Date</b></td>
-                <td width="340pt" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Invoice / Reference</b></td>
-                <td width="136pt" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #dddddd;"><b>Amount Paid (CAD)</b></td>
-            </tr>
+        <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 356pt; width: 576pt; font-size: 8pt; table-layout: fixed;">
+            <#-- Reference layout only: direct bill fields, no bill/credit calculations. -->
+            <thead><tr>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Date</th>
+                <th align="left" style="width: 10%; padding: 2pt; background-color: #ffffff; border: 0pt;">Type</th>
+                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Reference</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Original Amount</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Amount Due</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Disc</th>
+                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Payment</th>
+            </tr></thead>
 <#if check.apply?has_content>
     <#list check.apply as bill>
             <tr>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.applydate!""}</td>
-                <td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.refnum!""}</td>
-                <td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${bill.amount!""}</td>
+                <td align="center" style="width: 15%; padding: 2pt;">${bill.applydate!""}</td>
+                <td align="left" style="width: 10%; padding: 2pt;">${bill.type!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.refnum!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.total!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.due!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.disc!""}</td>
+                <td align="right" style="width: 15%; padding: 2pt;">${bill.amount!""}</td>
             </tr>
     </#list>
-    <#if check.apply?size lt 8>
-        <#list 1..(8 - check.apply?size) as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-        </#list>
-    </#if>
 <#else>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.trandate}</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">${check.memo!""}</td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;"><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td align="center" style="padding: 2pt;">${check.trandate}</td>
+                <td colspan="5" style="padding: 2pt;">${check.memo!""}</td>
+                <td align="right" style="padding: 2pt;"><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></td></tr>
-    <#list 1..7 as blankRow>
-            <tr><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td><td style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt;">&#160;</td></tr>
-    </#list>
+</#if></td>
+            </tr>
 </#if>
-            <tr><td colspan="2" align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b>Check Total (CAD)</b></td><td align="right" style="border: 0.5pt solid #555555; padding: 2pt 4pt; height: 13pt; background-color: #eeeeee;"><b><#if (check.usertotal!"")?has_content>
+            <tr>
+                <td colspan="5" style="padding: 2pt;"><b>CHECK TOTAL:</b></td>
+                <td style="padding: 2pt;">&#160;</td>
+                <td align="right" style="padding: 2pt;"><b><#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
 ${check.total}
-</#if></b></td></tr>
+</#if></b></td>
+            </tr>
         </table>
     </div>
 </#if>
