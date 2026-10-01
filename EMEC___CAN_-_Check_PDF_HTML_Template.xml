@@ -55,7 +55,7 @@
     
 <#if (check.currency!"")?string?trim?upper_case == "USD">
     <#-- ==================== COMPLETE USD LAYOUT ==================== -->
-    <#assign USD_BACKGROUND_URL = "REPLACE_WITH_USD_BACKGROUND_IMAGE_URL">
+    <#assign USD_BACKGROUND_URL = "https://3989465.app.netsuite.com/core/media/media.nl?id=4804&c=3989465&h=qo5wlEe54IT-FCvqBr9VMb1rYKlYk67RHVJf-MJUOhpH_EdJ">
     <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
 <#if check.apply?has_content>
         
@@ -190,7 +190,7 @@ ${check.total}
     
 
     <#-- ==================== COMPLETE CAD LAYOUT ==================== -->
-    <#assign CAD_BACKGROUND_URL = "REPLACE_WITH_CAD_BACKGROUND_IMAGE_URL">
+    <#assign CAD_BACKGROUND_URL = "https://3989465.app.netsuite.com/core/media/media.nl?id=4803&c=3989465&h=cFNvCEhSrDIXhdivfldeW-F-n8sj_OwAFqEmWf7QqReMGNL-">
     <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
 <#if check.apply?has_content>
         
