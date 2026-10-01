@@ -53,7 +53,7 @@
 <pbr />
 </#if>
     
-<#if (check.currency!"")?string?trim?upper_case == "CAD">
+<#if (check.currency.symbol!"")?string?trim?upper_case == "CAD">
     <#-- ==================== COMPLETE USD LAYOUT ==================== -->
     <#assign USD_BACKGROUND_URL = "https://3989465.app.netsuite.com/core/media/media.nl?id=4804&c=3989465&h=qo5wlEe54IT-FCvqBr9VMb1rYKlYk67RHVJf-MJUOhpH_EdJ">
     <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
