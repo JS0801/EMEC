@@ -56,21 +56,14 @@
 <#if (check.currency.symbol!"")?string?trim?upper_case == "CAD">
     <#-- ==================== COMPLETE USD LAYOUT ==================== -->
     <#assign USD_BACKGROUND_URL = "https://3989465.app.netsuite.com/core/media/media.nl?id=4804&c=3989465&h=qo5wlEe54IT-FCvqBr9VMb1rYKlYk67RHVJf-MJUOhpH_EdJ">
-    <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
-<#if check.apply?has_content>
-        
-<#if check.apply?size gt 8>
-            <#stop "This USD check has more than 8 applied bills. Print a separate remittance or extend the voucher layout before printing.">
-</#if>
-    
-</#if>
+      
     <div style="position: relative; width: 612pt; height: 790pt; font-size: 9pt;">
-<#if USD_BACKGROUND_URL?has_content && !USD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
+     <#if USD_BACKGROUND_URL?has_content && !USD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
         <img src="${USD_BACKGROUND_URL?xml}" style="position: absolute; left: 0pt; top: 0pt; width: 612pt; height: 792pt;" />
-</#if>
-        <table style="position: absolute; left: 536pt; top: 10pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
-        <table style="position: absolute; left: 536pt; top: 296pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
-        <table style="position: absolute; left: 536pt; top: 548pt; width: 68pt; height: 22pt; font-size: 12pt; background-color: #ffffff;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+     </#if>
+        <table style="position: absolute; left: 536pt; top: 15pt; width: 68pt; height: 22pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 296pt; width: 68pt; height: 22pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
+        <table style="position: absolute; left: 536pt; top: 548pt; width: 68pt; height: 22pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">${check.checknumber}</td></tr></table>
         <table style="position: absolute; left: 470pt; top: 324pt; width: 120pt; height: 14pt; font-size: 10pt;"><tr><td align="center" style="padding: 0pt;">
 <#if check.trandate?is_date_like>
 ${check.trandate?string("dd MM yyyy")}
@@ -191,14 +184,7 @@ ${check.total}
 
     <#-- ==================== COMPLETE CAD LAYOUT ==================== -->
     <#assign CAD_BACKGROUND_URL = "https://3989465.app.netsuite.com/core/media/media.nl?id=4803&c=3989465&h=cFNvCEhSrDIXhdivfldeW-F-n8sj_OwAFqEmWf7QqReMGNL-">
-    <#-- Fixed voucher space: stop instead of silently omitting applied bills. -->
-<#if check.apply?has_content>
-        
-<#if check.apply?size gt 8>
-            <#stop "Check has more than 8 applied bills. Print a separate remittance or extend the voucher layout before printing.">
-</#if>
-    
-</#if>
+      
     <div style="position: relative; width: 612pt; height: 790pt; font-size: 9pt;">
 <#if CAD_BACKGROUND_URL?has_content && !CAD_BACKGROUND_URL?starts_with("REPLACE_WITH_")>
         <img src="${CAD_BACKGROUND_URL?xml}" style="position: absolute; left: 0pt; top: 0pt; width: 612pt; height: 792pt;" />
