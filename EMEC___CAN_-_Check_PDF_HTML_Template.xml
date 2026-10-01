@@ -231,13 +231,13 @@ ${check.total}
         <table class="remittance" cellpadding="0" cellspacing="0" style="position: absolute; left: 18pt; top: 70pt; width: 576pt; font-size: 8pt; table-layout: fixed;">
             <#-- Reference layout only: direct bill fields, no bill/credit calculations. -->
             <thead><tr>
-                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Date</th>
-                <th align="left" style="width: 10%; padding: 2pt; background-color: #ffffff; border: 0pt;">Type</th>
-                <th align="center" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Reference</th>
-                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Original Amount</th>
-                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Amount Due</th>
-                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Disc</th>
-                <th align="right" style="width: 15%; padding: 2pt; background-color: #ffffff; border: 0pt;">Payment</th>
+                <th align="center" style="width: 15%; padding: 4pt; background-color: #ffffff; border: 0pt;">Date</th>
+                <th align="left" style="width: 10%; padding: 4pt; background-color: #ffffff; border: 0pt;">Type</th>
+                <th align="center" style="width: 15%; padding: 4pt; background-color: #ffffff; border: 0pt;">Reference</th>
+                <th align="right" style="width: 15%; padding: 4pt; background-color: #ffffff; border: 0pt;">Original Amount</th>
+                <th align="right" style="width: 15%; padding: 4pt; background-color: #ffffff; border: 0pt;">Amount Due</th>
+                <th align="right" style="width: 15%; padding: 4pt; background-color: #ffffff; border: 0pt;">Disc</th>
+                <th align="right" style="width: 15%; padding: 4pt; background-color: #ffffff; border: 0pt;">Payment</th>
             </tr></thead>
 <#if check.apply?has_content>
     <#list check.apply as bill>
