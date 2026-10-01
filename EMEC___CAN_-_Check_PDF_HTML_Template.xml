@@ -71,8 +71,8 @@ ${check.trandate?string("dd MM yyyy")}
 ${check.trandate}
 </#if>
 </td></tr></table>
-        <table style="position: absolute; left: 40pt; top: 368pt; width: 404pt; height: 26pt; font-size: 9pt;"><tr><td align="left" style="padding: 0pt;">${check.totalwords?lower_case?cap_first} ***</td></tr></table>
-        <table style="position: absolute; left: 491pt; top: 362pt; width: 94pt; height: 20pt; font-size: 11pt;"><tr><td align="right" style="padding: 0pt;">**
+        <table style="position: absolute; left: 40pt; top: 369pt; width: 404pt; height: 26pt; font-size: 9pt;"><tr><td align="left" style="padding: 0pt;">${check.totalwords?lower_case?cap_first} ***</td></tr></table>
+        <table style="position: absolute; left: 487pt; top: 369pt; width: 94pt; height: 20pt; font-size: 11pt;"><tr><td align="right" style="padding: 0pt;">**
 <#if (check.usertotal!"")?has_content>
 ${check.usertotal}
 <#else>
